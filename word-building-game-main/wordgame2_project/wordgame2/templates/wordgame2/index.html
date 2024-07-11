@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Game</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'wordgame2/css/styles.css' %}">
+    <script>
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = duration;
+                alert('Time is up! Computer wins.');
+                document.getElementById('userchoice').setAttribute('disabled', true);
+                document.getElementById('submit-btn').setAttribute('disabled', true);
+                document.getElementById('restart-btn').style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    window.onload = function () {
+        var fifteenSeconds = 15,
+            display = document.querySelector('#time');
+        startTimer(fifteenSeconds, display);
+    };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <center>
+        <h1>Word Trail</h1>
+        <p style="color:tomato;" id="time"></p>
+        {% if message %}
+            <p>{{ message }}</p>
+            <p>Computer points: {{ cmarks }}</p>
+            <p>User points: {{ umarks }}</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="restart" id="restart-btn">Restart Game</button>
+            </form>
+        {% else %}
+            <p>Computer choice: {{ computerchoice }}</p>
+            <p>Last character: {{ lastchar1 }}</p>
+            <form method="post">
+                {% csrf_token %}
+                <label for="userchoice">Your choice: </label>
+                <input type="text" id="userchoice" name="userchoice" required>
+                <button type="submit" id="submit-btn">Submit</button>
+            </form>
+            <p>Computer points: {{ cmarks }}</p>
+            <p>User points: {{ umarks }}</p>
+        {% endif %}
+    </center>
+    </div>
+</body>
+</html>
